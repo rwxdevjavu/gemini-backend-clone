@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Depends
 import router.auth as auth
 import router.chatroom as chatroom
+import models.message as messsage
+from db import BASE,engine
 
 app = FastAPI()
 
 # BASE.metadata.drop_all(bind=engine)
-# BASE.metadata.create_all(bind=engine)
+BASE.metadata.create_all(bind=engine)
 
 @app.get("/")
 def root():

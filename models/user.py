@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
+from sqlalchemy.orm import relationship, declarative_base
 from db import BASE
 
 
@@ -10,14 +11,15 @@ class User(BASE):
     password = Column(String)
     otp = Column(String)
     is_verified = Column(Boolean, default=False)
-    is_paid = Column(Boolean, default=False)
+    is_pro = Column(Boolean, default=False)
     rate = Column(Integer,default=5)
     access_token = Column(String)
+    chatrooms = relationship("Chatroom", back_populates="owner", cascade="all, delete-orphan")
+    created_at = Column(DateTime, default=func.now())
 
 
-    def __init__(self,mobile_no,name,password,otp):
+    def __init__(self,mobile_no,name,password):
         self.mobile_no = mobile_no
         self.name = name
         self.password = password
-        self.otp = otp
 

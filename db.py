@@ -16,17 +16,12 @@ session = sessionmaker(bind=engine,autoflush=True)
 
 db_session = session()
 
-BASE = declarative_base();
+BASE = declarative_base()
 
 def get_db():
     db = session()
     try: yield db
     finally: db.close()
-
-
-# BASE.metadata.drop_all(bind=engine)
-# BASE.metadata.create_all(bind=engine)
-
 
 # try:
 #     connection = engine.connect()
