@@ -9,7 +9,7 @@ from utils import generate_otp
 router = APIRouter()
 
 
-@router.post("/auth/signup")
+@router.post("/signup")
 def signup(request:SignupRequest,db: Session = Depends(get_db)):
     user = db.query(User).filter_by(mobile_no=request.mobile_no).first()
     if user:
@@ -21,14 +21,14 @@ def signup(request:SignupRequest,db: Session = Depends(get_db)):
     db.commit();
     return {"success":True, "message":"User create successfully"}
 
-@router.post("/auth/send-otp")
+@router.post("/send-otp")
 def sendotp(request:SentOTP,db:Session = Depends(get_db)):
     user = db.query(User).filter_by(mobile_no=request.mobile_no).first()
     if not user:
         HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return {"success":True,"otp":user.otp}
 
-@router.post("/auth/verify-otp")
+@router.post("/verify-otp")
 def verifyotp(request:VeriftOTP,db:Session = Depends(get_db)):
     user = db.query(User).filter_by(mobile_no=request.mobile_no,otp = request.otp).first()
     if not user:
@@ -37,7 +37,7 @@ def verifyotp(request:VeriftOTP,db:Session = Depends(get_db)):
     db.commit()
     return {"success":True,"message":"OTP verified successfully"}
     
-@router.post('/auth/signin')
+@router.post('/signin')
 def signin(request:SigninRequest,db:Session = Depends(get_db)):
     user = db.query(User).filter_by(mobile_no=request.mobile_no).first()
     try:
