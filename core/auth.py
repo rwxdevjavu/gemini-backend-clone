@@ -53,7 +53,3 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         hashed_password.encode("utf-8")
     )
 
-# token = create_access_token({"sub":"123"})
-# payload = get_current_user("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMifQ.NQmrOijuwbvs5M2JvllEAMU089KzM6y5agLVPEaQ21I")
-# print(token,payload)
-
