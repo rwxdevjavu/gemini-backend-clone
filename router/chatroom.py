@@ -8,6 +8,11 @@ from models.message import Message
 from schema.chatroom import SendMessage
 from fastapi.security import OAuth2PasswordBearer
 
+from redis import Redis 
+from core.gemini import request_gemini
+
+redis_conn = Redis(host="localhost", port=6379)
+
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -44,6 +49,7 @@ def get_chatroom_messages(id: int,request:SendMessage,user: User = Depends(get_c
         message = Message(request.message,chatroom.id,True)
         db.add(message)
         db.commit();
-        return { "Success":True }
+        response_text = request_gemini(request.message)
+        return { "Success":True, "response_text":response_text }
     except:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong")
