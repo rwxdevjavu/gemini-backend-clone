@@ -18,6 +18,12 @@ db_session = session()
 
 BASE = declarative_base();
 
+def get_db():
+    db = session()
+    try: yield db
+    finally: db.close()
+
+
 # BASE.metadata.drop_all(bind=engine)
 # BASE.metadata.create_all(bind=engine)
 
