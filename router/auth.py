@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException,status
 from models.user import User
 from db import get_db
 from core.auth import hash_password,verify_password,create_access_token,get_current_user
-from utils import generate_otp
+from core.utils import generate_otp
 
 router = APIRouter()
 
