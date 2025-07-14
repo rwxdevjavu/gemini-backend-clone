@@ -9,6 +9,7 @@ from schema.chatroom import SendMessage
 from fastapi.security import OAuth2PasswordBearer
 from core.ratelimiter import rate_limit
 
+import json
 from redis import Redis 
 from rq import Queue
 from core.gemini import request_gemini
@@ -23,12 +24,27 @@ redis_conn = Redis(host=REDIS_DOMAIN, port=6379, db=0)
 queue = Queue(connection=redis_conn)
 
 
+
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.get("")
 def get_chatrooms(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    cache_key = f"chatrooms:{user.id}"
+    cached_data = redis_conn.get(cache_key)
+    if cached_data:
+        return json.loads(cached_data)
     chats = db.query(Chatroom).filter_by(user_id = user.id).all()
+    def serialize(chat):
+        return {
+            "id": chat.id,
+            "title": chat.title,
+            "created_at": str(chat.created_at),
+        }
+
+    chat_data = [serialize(chat) for chat in chats]
+
+    redis_conn.setex(cache_key,300, json.dumps(chat_data))
     return chats
 
 @router.post("")
