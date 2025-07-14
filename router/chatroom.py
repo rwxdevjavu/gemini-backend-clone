@@ -76,9 +76,7 @@ def get_chatroom_messages(id: int,request:SendMessage,user: User = Depends(get_c
         message = Message(request.message,chatroom.id,True)
         db.add(message)
         db.commit();
-        # response = request_gemini(request.message,chatroom.id)
-        # return {"response":response}
-        job = queue.enqueue(request_gemini,request.message,chatroom.id)
+        job = request_gemini.apply_async(args=[request.message, chatroom.id])
         return { "Success":True, "message":"generating response","job_id":job.id }
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="AI couldnot generate prompt please try again")
