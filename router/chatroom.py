@@ -12,8 +12,11 @@ from core.ratelimiter import rate_limit
 from redis import Redis 
 from rq import Queue
 from core.gemini import request_gemini
+import os
 
-redis_conn = Redis(host="localhost", port=6379)
+REDIS_DOMAIN = os.getenv("REDIS_DOMAIN")
+
+redis_conn = Redis(host=REDIS_DOMAIN, port=6379, db=0)
 queue = Queue(connection=redis_conn)
 
 
