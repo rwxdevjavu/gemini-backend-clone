@@ -8,7 +8,6 @@ from core.utils import generate_otp
 
 router = APIRouter()
 
-
 @router.post("/signup")
 def signup(request:SignupRequest,db: Session = Depends(get_db)):
     user = db.query(User).filter_by(mobile_no=request.mobile_no).first()
