@@ -2,8 +2,10 @@ from fastapi import HTTPException,status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from redis import Redis
+import os
 
-redis = Redis(port=6379,decode_responses=True)
+REDIS_DOMAIN = os.getenv("REDIS_DOMAIN")
+redis = Redis(host=REDIS_DOMAIN,port=6379,decode_responses=True)
 
 def rate_limit(user):
     if user.is_pro:
