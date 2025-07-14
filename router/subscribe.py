@@ -17,7 +17,7 @@ YOUR_DOMAIN = "http://localhost:3000"
 
 @router.post("/pro")
 def get_pro(user: User = Depends(get_current_user)):
-    if True:
+    if not user.is_pro:
         try:
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
@@ -40,8 +40,9 @@ def get_pro(user: User = Depends(get_current_user)):
             )
             return {"id": checkout_session.id, "url": checkout_session.url}
         except Exception as e:
-            return {"error": str(e)}
-
+            HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="stripe api not working")
+    else:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="User already using premium")
 
 @router.post("/status")
 def get_status(user: User = Depends(get_current_user)):
