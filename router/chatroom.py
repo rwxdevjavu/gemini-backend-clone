@@ -13,6 +13,9 @@ from redis import Redis
 from rq import Queue
 from core.gemini import request_gemini
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 REDIS_DOMAIN = os.getenv("REDIS_DOMAIN")
 

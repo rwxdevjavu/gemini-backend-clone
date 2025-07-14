@@ -7,6 +7,9 @@ import bcrypt
 from db import get_db
 from models.user import User
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")

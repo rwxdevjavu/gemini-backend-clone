@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Depends
 import router.auth as auth
 import router.chatroom as chatroom
-import models.message as messsage
+import router.subscribe as subscribe
+import router.webhook as webhook
 from db import BASE,engine
 from dotenv import load_dotenv
 load_dotenv()
@@ -18,4 +19,6 @@ def root():
 
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(chatroom.router,prefix="/chatroom",tags=["Chatroom"])
+app.include_router(subscribe.router,prefix="/subscribe",tags=["Subscription"])
+app.include_router(webhook.router,prefix="/webhook",tags=["Subscription"])
 

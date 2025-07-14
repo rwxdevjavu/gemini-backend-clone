@@ -1,8 +1,9 @@
 from fastapi import HTTPException,status
-from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 from redis import Redis
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 REDIS_DOMAIN = os.getenv("REDIS_DOMAIN")
 redis = Redis(host=REDIS_DOMAIN,port=6379,decode_responses=True)

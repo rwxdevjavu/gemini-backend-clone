@@ -1,5 +1,8 @@
 from google import genai
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 from models.message import Message
 
 GEMINI_API_KEY=os.getenv("GEMINI_API_KEY")
