@@ -4,14 +4,9 @@ from sqlalchemy.orm import Session
 from jose import jwt,JWTError,ExpiredSignatureError
 from datetime import datetime,timedelta,timezone
 import bcrypt
-
 from db import get_db
 from models.user import User
-from dotenv import load_dotenv
 import os
-
-
-load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")

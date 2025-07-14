@@ -3,6 +3,9 @@ import router.auth as auth
 import router.chatroom as chatroom
 import models.message as messsage
 from db import BASE,engine
+from dotenv import load_dotenv
+load_dotenv()
+
 
 app = FastAPI()
 

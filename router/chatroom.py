@@ -7,11 +7,15 @@ from models.chatroom import Chatroom
 from models.message import Message
 from schema.chatroom import SendMessage
 from fastapi.security import OAuth2PasswordBearer
+from core.ratelimiter import rate_limit
 
 from redis import Redis 
+from rq import Queue
 from core.gemini import request_gemini
 
 redis_conn = Redis(host="localhost", port=6379)
+queue = Queue(connection=redis_conn)
+
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -42,6 +46,7 @@ def get_chatroom_messages(id: int,user: User = Depends(get_current_user), db: Se
 
 @router.post("/{id}/message")
 def get_chatroom_messages(id: int,request:SendMessage,user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    rate_limit(user)
     chatroom = db.query(Chatroom).filter_by(user_id = user.id,id = id).first()
     if not chatroom:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Room not found")
@@ -49,7 +54,9 @@ def get_chatroom_messages(id: int,request:SendMessage,user: User = Depends(get_c
         message = Message(request.message,chatroom.id,True)
         db.add(message)
         db.commit();
-        response_text = request_gemini(request.message)
-        return { "Success":True, "response_text":response_text }
-    except:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong")
+        # response = request_gemini(request.message,chatroom.id)
+        # return {"response":response}
+        job = queue.enqueue(request_gemini,request.message,chatroom.id)
+        return { "Success":True, "message":"generating response","job_id":job.id }
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="AI couldnot generate prompt please try again")
